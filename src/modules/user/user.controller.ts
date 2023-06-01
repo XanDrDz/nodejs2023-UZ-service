@@ -43,7 +43,7 @@ export class UserController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   createUser(@Body() createUserDto: CreateUserDto) {
-    if (!createUserDto.login || !createUserDto.password) {
+    if (!createUserDto || !createUserDto.login || !createUserDto.password) {
       throw new BadRequestException('Login and password are required');
     }
 
