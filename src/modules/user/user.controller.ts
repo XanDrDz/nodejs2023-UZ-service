@@ -13,7 +13,7 @@ import {
   Put,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { isValidUUID } from '../../utils/utils';
+import { validationID } from '../../utils/utils';
 import { CreateUserDto, UpdatePasswordDto } from './dto/user.dto';
 
 @Controller('user')
@@ -29,9 +29,7 @@ export class UserController {
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   getUserById(@Param('id') id: string) {
-    if (!isValidUUID(id)) {
-      throw new BadRequestException('Invalid userId');
-    }
+    validationID(id);
     const user = this.userService.getUserById(id);
     if (!user) {
       throw new NotFoundException('User not found');
@@ -56,9 +54,7 @@ export class UserController {
     @Body() updatePasswordDto: UpdatePasswordDto,
     @Param('id') id: string,
   ) {
-    if (!isValidUUID(id)) {
-      throw new BadRequestException('Invalid userId');
-    }
+    validationID(id);
     const user = this.userService.getUserById(id);
     if (!user) {
       throw new NotFoundException('User not found');
@@ -77,9 +73,7 @@ export class UserController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   deleteUser(@Param('id') id: string) {
-    if (!isValidUUID(id)) {
-      throw new BadRequestException('Invalid userId');
-    }
+    validationID(id);
     const user = this.userService.getUserById(id);
     if (!user) {
       throw new NotFoundException('User not found');

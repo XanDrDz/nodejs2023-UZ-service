@@ -12,7 +12,7 @@ import {
   Put,
 } from '@nestjs/common';
 import { TrackService } from './track.service';
-import { isValidUUID } from '../../utils/utils';
+import { validationID } from '../../utils/utils';
 import { CreateTrackDto, UpdateTrackDto } from './dto/track.dto';
 import { isRequestInvalid } from './helpers/track-body-checker';
 
@@ -29,9 +29,7 @@ export class TrackController {
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   getTrackById(@Param('id') id: string) {
-    if (!isValidUUID(id)) {
-      throw new BadRequestException('Invalid ID');
-    }
+    validationID(id);
     const track = this.trackService.getTrackById(id);
     if (!track) {
       throw new NotFoundException('Track not found');
@@ -56,9 +54,7 @@ export class TrackController {
     @Body() updateTrackDto: UpdateTrackDto,
     @Param('id') id: string,
   ) {
-    if (!isValidUUID(id)) {
-      throw new BadRequestException('Invalid ID');
-    }
+    validationID(id);
     const track = this.trackService.getTrackById(id);
     if (!track) {
       throw new NotFoundException('Track not found');
@@ -75,9 +71,7 @@ export class TrackController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   deleteTrack(@Param('id') id: string) {
-    if (!isValidUUID(id)) {
-      throw new BadRequestException('Invalid ID');
-    }
+    validationID(id);
     const track = this.trackService.getTrackById(id);
     if (!track) {
       throw new NotFoundException('Track not found');

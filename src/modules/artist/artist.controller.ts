@@ -12,7 +12,7 @@ import {
   Put,
 } from '@nestjs/common';
 import { ArtistService } from './artist.service';
-import { isValidUUID } from '../../utils/utils';
+import { validationID } from '../../utils/utils';
 import { CreateArtistDto, UpdateArtistDto } from './dto/artist.dto';
 
 @Controller('artist')
@@ -28,9 +28,7 @@ export class ArtistController {
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   getArtistById(@Param('id') id: string) {
-    if (!isValidUUID(id)) {
-      throw new BadRequestException('Invalid ID');
-    }
+    validationID(id);
     const artist = this.artistService.getArtistById(id);
     if (!artist) {
       throw new NotFoundException('Artist not found');
@@ -55,9 +53,7 @@ export class ArtistController {
     @Body() updateArtistDto: UpdateArtistDto,
     @Param('id') id: string,
   ) {
-    if (!isValidUUID(id)) {
-      throw new BadRequestException('Invalid ID');
-    }
+    validationID(id);
     const artist = this.artistService.getArtistById(id);
     if (!artist) {
       throw new NotFoundException('Artist not found');
@@ -72,9 +68,7 @@ export class ArtistController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   deleteArtist(@Param('id') id: string) {
-    if (!isValidUUID(id)) {
-      throw new BadRequestException('Invalid ID');
-    }
+    validationID(id);
     const artist = this.artistService.getArtistById(id);
     if (!artist) {
       throw new NotFoundException('Artist not found');
