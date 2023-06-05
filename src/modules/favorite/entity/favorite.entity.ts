@@ -1,10 +1,9 @@
-import { Artist } from "../../artist/models/artist.interface";
-import { Album } from "../../album/models/album.interface";
-import { Track } from "../../track/models/track.interface";
-
+import { ArtistEntity } from '../../artist/entities/artist.entity';
+import { AlbumEntity } from '../../album/entities/album.entity';
+import { TrackEntity } from '../../track/entities/track.entity';
 
 export class FavouritesEntity {
-  artists: Artist[] = [];
-  albums: Album[] = [];
-  tracks: Track[] = [];
+  artists: ArtistEntity[] = [];
+  albums: AlbumEntity[] = [];
+  tracks: TrackEntity[] = [];
 }

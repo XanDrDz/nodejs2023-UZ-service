@@ -7,10 +7,10 @@ import {
   HttpCode,
   HttpStatus,
   NotFoundException,
-  Param,
+  Param, ParseUUIDPipe,
   Post,
-  Put,
-} from '@nestjs/common';
+  Put
+} from "@nestjs/common";
 import { ArtistService } from './artist.service';
 import { validationID } from '../../utils/utils';
 import { CreateArtistDto, UpdateArtistDto } from './dto/artist.dto';
@@ -27,7 +27,7 @@ export class ArtistController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  getArtistById(@Param('id') id: string) {
+  getArtistById(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     validationID(id);
     const artist = this.artistService.getArtistById(id);
     if (!artist) {

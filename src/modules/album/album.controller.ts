@@ -59,7 +59,7 @@ export class AlbumController {
   @HttpCode(HttpStatus.OK)
   updateAlbumInfo(
     @Body() updateAlbumDto: UpdateAlbumDto,
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string
   ) {
     validationID(id);
     const album = this.albumService.getAlbumById(id);

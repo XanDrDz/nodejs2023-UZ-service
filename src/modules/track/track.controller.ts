@@ -68,8 +68,7 @@ export class TrackController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteTrack(@Param('id') id: string) {
-    validationID(id);
+  deleteTrack(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     const track = this.trackService.getTrackById(id);
     if (!track) {
       throw new NotFoundException('Track not found');
