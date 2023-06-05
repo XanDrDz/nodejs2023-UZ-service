@@ -1,11 +1,27 @@
-export interface CreateAlbumDto {
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+
+export class CreateAlbumDto {
+  @IsNotEmpty()
+  @IsString()
   name: string;
+
+  @IsNotEmpty()
+  @IsNumber()
   year: number;
-  artistId: string | null; // refers to Artist
+
+  @IsOptional()
+  artistId: string | null;
 }
 
-export interface UpdateAlbumDto {
+export class UpdateAlbumDto {
+  @IsNotEmpty()
+  @IsString()
   name: string;
+
+  @IsNotEmpty()
+  @IsNumber()
   year: number;
-  artistId: string | null; // refers to Artist
+
+  @IsOptional()
+  artistId: string | null;
 }

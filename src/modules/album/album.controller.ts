@@ -1,6 +1,6 @@
 import {
   BadRequestException,
-  Body,
+  Body, ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
@@ -8,27 +8,38 @@ import {
   HttpStatus,
   NotFoundException,
   Param,
+  ParseUUIDPipe,
   Post,
-  Put,
-} from '@nestjs/common';
+  Put, UseInterceptors
+} from "@nestjs/common";
 import { AlbumService } from './album.service';
 import { validationID } from '../../utils/utils';
 import { CreateAlbumDto, UpdateAlbumDto } from './dto/album.dto';
+import { AlbumEntity } from './entities/album.entity';
 
 @Controller('album')
+@UseInterceptors(ClassSerializerInterceptor)
 export class AlbumController {
   constructor(private albumService: AlbumService) {}
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  getAllAlbums() {
-    this.albumService.getAllAlbums();
+  getAllAlbums(): AlbumEntity[] {
+    return this.albumService.getAllAlbums();
   }
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  getAlbumById(@Param('id') id: string) {
-    validationID(id);
+  getAlbumById(
+    @Param(
+      'id',
+      new ParseUUIDPipe({
+        version: '4',
+        errorHttpStatusCode: HttpStatus.BAD_REQUEST,
+      }),
+    )
+    id: string,
+  ): AlbumEntity {
     const album = this.albumService.getAlbumById(id);
     if (!album) {
       throw new NotFoundException('Album not found');
@@ -39,15 +50,7 @@ export class AlbumController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  createAlbum(@Body() createAlbumDto: CreateAlbumDto) {
-    if (
-      !createAlbumDto ||
-      createAlbumDto.name ||
-      createAlbumDto.artistId ||
-      createAlbumDto.year
-    ) {
-      throw new BadRequestException('Additional data required');
-    }
+  createAlbum(@Body() createAlbumDto: CreateAlbumDto): AlbumEntity {
 
     return this.albumService.createAlbum(createAlbumDto);
   }
@@ -73,12 +76,20 @@ export class AlbumController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteAlbum(@Param('id') id: string) {
-    validationID(id);
+  deleteAlbum(
+    @Param(
+      'id',
+      new ParseUUIDPipe({
+        version: '4',
+        errorHttpStatusCode: HttpStatus.BAD_REQUEST,
+      }),
+    )
+    id: string,
+  ) {
     const album = this.albumService.getAlbumById(id);
     if (!album) {
       throw new NotFoundException('Album not found');
     }
-    this.albumService.deleteAlbum(id);
+    return this.albumService.deleteAlbum(id);
   }
 }

@@ -3,32 +3,51 @@ import { DbService } from '../../db/db.service';
 import { v4 as uuidv4 } from 'uuid';
 import { Album } from './models/album.interface';
 import { CreateAlbumDto } from './dto/album.dto';
+import { TrackService } from '../track/track.service';
+import { FavoriteService } from '../favorite/favorite.service';
+import { AlbumEntity } from "./entities/album.entity";
 
 @Injectable()
 export class AlbumService {
-  constructor(private db: DbService) {}
+  constructor(
+    private db: DbService,
+    private trackService: TrackService,
+    private favoriteService: FavoriteService,
+  ) {}
 
   getAllAlbums(): Album[] {
     return this.db.albums;
   }
 
-  getAlbumById(id: string): Album | undefined {
-    return this.db.albums.find((album: Album) => album.id === id);
+  getAlbumById(id: string): AlbumEntity {
+    return this.db.albums.find(({ id: albumId }) => albumId === id) ?? null;
   }
 
-  createAlbum(createAlbumDto: CreateAlbumDto): Album {
+  createAlbum(createAlbumDto: CreateAlbumDto): AlbumEntity {
     const newAlbum: Album = {
       id: uuidv4(),
-      name: createAlbumDto.name,
-      year: createAlbumDto.year,
-      artistId: createAlbumDto.artistId,
+      ...createAlbumDto,
     };
     this.db.albums.push(newAlbum);
     return newAlbum;
   }
 
-  deleteAlbum(id: string): void {
+  deleteAlbum(id: string): AlbumEntity {
     const index = this.db.albums.findIndex((album: Album) => album.id === id);
-    this.db.albums.splice(index, 1);
+
+
+    const [deletedAlbum] = this.db.albums.splice(index, 1);
+    this.trackService.removeAlbumId(id);
+    this.favoriteService.removeAlbum(id, true);
+
+    return deletedAlbum;
+  }
+
+  removeArtistId(id: string) {
+    this.db.albums.forEach((album: Album) => {
+      if (album.artistId === id) {
+        album.artistId = null;
+      }
+    });
   }
 }

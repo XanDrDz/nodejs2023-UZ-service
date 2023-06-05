@@ -22,7 +22,7 @@ export class ArtistController {
   @Get()
   @HttpCode(HttpStatus.OK)
   getAllArtists() {
-    this.artistService.getAllArtists();
+    return this.artistService.getAllArtists();
   }
 
   @Get(':id')
@@ -40,7 +40,7 @@ export class ArtistController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   createArtist(@Body() createArtistDto: CreateArtistDto) {
-    if (!createArtistDto || createArtistDto.name || createArtistDto.grammy) {
+    if (!createArtistDto || !createArtistDto.name || !createArtistDto.grammy) {
       throw new BadRequestException('Additional data required');
     }
 

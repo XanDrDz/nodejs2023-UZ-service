@@ -7,14 +7,15 @@ import {
   HttpCode,
   HttpStatus,
   NotFoundException,
-  Param,
+  Param, ParseUUIDPipe,
   Post,
-  Put,
-} from '@nestjs/common';
+  Put
+} from "@nestjs/common";
 import { TrackService } from './track.service';
 import { validationID } from '../../utils/utils';
 import { CreateTrackDto, UpdateTrackDto } from './dto/track.dto';
 import { isRequestInvalid } from './helpers/track-body-checker';
+import { TrackEntity } from "./entities/track.entity";
 
 @Controller('track')
 export class TrackController {
@@ -23,12 +24,12 @@ export class TrackController {
   @Get()
   @HttpCode(HttpStatus.OK)
   getAllTracks() {
-    this.trackService.getAllTracks();
+    return this.trackService.getAllTracks();
   }
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  getTrackById(@Param('id') id: string) {
+  getTrackById(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string): TrackEntity {
     validationID(id);
     const track = this.trackService.getTrackById(id);
     if (!track) {
@@ -40,10 +41,7 @@ export class TrackController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  createTrack(@Body() createTrackDto: CreateTrackDto) {
-    if (!createTrackDto || isRequestInvalid(createTrackDto)) {
-      throw new BadRequestException('Additional data required');
-    }
+  createTrack(@Body() createTrackDto: CreateTrackDto): TrackEntity {
 
     return this.trackService.createTrack(createTrackDto);
   }
@@ -52,7 +50,7 @@ export class TrackController {
   @HttpCode(HttpStatus.OK)
   updateTrackInfo(
     @Body() updateTrackDto: UpdateTrackDto,
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
   ) {
     validationID(id);
     const track = this.trackService.getTrackById(id);
