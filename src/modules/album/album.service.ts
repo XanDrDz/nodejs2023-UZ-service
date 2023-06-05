@@ -5,7 +5,7 @@ import { Album } from './models/album.interface';
 import { CreateAlbumDto } from './dto/album.dto';
 import { TrackService } from '../track/track.service';
 import { FavoriteService } from '../favorite/favorite.service';
-import { AlbumEntity } from "./entities/album.entity";
+import { AlbumEntity } from './entities/album.entity';
 
 @Injectable()
 export class AlbumService {
@@ -34,7 +34,6 @@ export class AlbumService {
 
   deleteAlbum(id: string): AlbumEntity {
     const index = this.db.albums.findIndex((album: Album) => album.id === id);
-
 
     const [deletedAlbum] = this.db.albums.splice(index, 1);
     this.trackService.removeAlbumId(id);

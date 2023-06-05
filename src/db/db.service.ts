@@ -3,7 +3,10 @@ import { User } from '../modules/user/models/user.interface';
 import { Artist } from '../modules/artist/models/artist.interface';
 import { Track } from '../modules/track/models/track.interface';
 import { Album } from '../modules/album/models/album.interface';
-import { Favorites, FavoritesResponse } from "../modules/favorite/models/favorite.interface";
+import {
+  Favorites,
+  FavoritesResponse,
+} from '../modules/favorite/models/favorite.interface';
 
 @Injectable()
 export class DbService {

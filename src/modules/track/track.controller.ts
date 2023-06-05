@@ -7,15 +7,16 @@ import {
   HttpCode,
   HttpStatus,
   NotFoundException,
-  Param, ParseUUIDPipe,
+  Param,
+  ParseUUIDPipe,
   Post,
-  Put
-} from "@nestjs/common";
+  Put,
+} from '@nestjs/common';
 import { TrackService } from './track.service';
 import { validationID } from '../../utils/utils';
 import { CreateTrackDto, UpdateTrackDto } from './dto/track.dto';
 import { isRequestInvalid } from './helpers/track-body-checker';
-import { TrackEntity } from "./entities/track.entity";
+import { TrackEntity } from './entities/track.entity';
 
 @Controller('track')
 export class TrackController {
@@ -29,7 +30,9 @@ export class TrackController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  getTrackById(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string): TrackEntity {
+  getTrackById(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ): TrackEntity {
     validationID(id);
     const track = this.trackService.getTrackById(id);
     if (!track) {
@@ -42,7 +45,6 @@ export class TrackController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   createTrack(@Body() createTrackDto: CreateTrackDto): TrackEntity {
-
     return this.trackService.createTrack(createTrackDto);
   }
 

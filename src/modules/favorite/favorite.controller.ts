@@ -15,9 +15,7 @@ import { FavoriteService } from './favorite.service';
 @Controller('favs')
 @UseInterceptors(ClassSerializerInterceptor)
 export class FavoriteController {
-  constructor(
-    private favoriteService: FavoriteService,
-  ) {}
+  constructor(private favoriteService: FavoriteService) {}
 
   @Get()
   @HttpCode(HttpStatus.OK)
@@ -39,25 +37,27 @@ export class FavoriteController {
 
   @Post('album/:id')
   @HttpCode(HttpStatus.CREATED)
-  addAlbumToFavs(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string,) {
+  addAlbumToFavs(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     return this.favoriteService.addAlbum(id);
   }
 
   @Delete('album/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteAlbum(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string,) {
+  deleteAlbum(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     this.favoriteService.removeAlbum(id);
   }
 
   @Post('artist/:id')
   @HttpCode(HttpStatus.CREATED)
-  addArtistToFavs(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string,) {
+  addArtistToFavs(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ) {
     return this.favoriteService.addArtist(id);
   }
 
   @Delete('artist/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteArtist(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string,) {
+  deleteArtist(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     this.favoriteService.removeArtist(id);
   }
 }

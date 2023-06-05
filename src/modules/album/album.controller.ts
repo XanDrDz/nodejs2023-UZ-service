@@ -1,6 +1,7 @@
 import {
   BadRequestException,
-  Body, ClassSerializerInterceptor,
+  Body,
+  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
@@ -10,8 +11,9 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
-  Put, UseInterceptors
-} from "@nestjs/common";
+  Put,
+  UseInterceptors,
+} from '@nestjs/common';
 import { AlbumService } from './album.service';
 import { validationID } from '../../utils/utils';
 import { CreateAlbumDto, UpdateAlbumDto } from './dto/album.dto';
@@ -51,7 +53,6 @@ export class AlbumController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   createAlbum(@Body() createAlbumDto: CreateAlbumDto): AlbumEntity {
-
     return this.albumService.createAlbum(createAlbumDto);
   }
 
@@ -59,7 +60,7 @@ export class AlbumController {
   @HttpCode(HttpStatus.OK)
   updateAlbumInfo(
     @Body() updateAlbumDto: UpdateAlbumDto,
-    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
   ) {
     validationID(id);
     const album = this.albumService.getAlbumById(id);

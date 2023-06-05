@@ -3,7 +3,7 @@ import { DbService } from '../../db/db.service';
 import { CreateUserDto } from './dto/user.dto';
 import { User } from './models/user.interface';
 import { v4 as uuidv4 } from 'uuid';
-import { UserEntity } from "./entities/user.entity";
+import { UserEntity } from './entities/user.entity';
 
 @Injectable()
 export class UserService {

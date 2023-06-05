@@ -3,12 +3,15 @@ import { DbService } from '../../db/db.service';
 import { Track } from './models/track.interface';
 import { v4 as uuidv4 } from 'uuid';
 import { CreateTrackDto } from './dto/track.dto';
-import { FavoriteService } from "../favorite/favorite.service";
-import { TrackEntity } from "./entities/track.entity";
+import { FavoriteService } from '../favorite/favorite.service';
+import { TrackEntity } from './entities/track.entity';
 
 @Injectable()
 export class TrackService {
-  constructor(private db: DbService, private favoriteService: FavoriteService) {}
+  constructor(
+    private db: DbService,
+    private favoriteService: FavoriteService,
+  ) {}
 
   getAllTracks(): Track[] {
     return this.db.tracks;

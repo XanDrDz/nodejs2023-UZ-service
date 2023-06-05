@@ -7,10 +7,11 @@ import {
   HttpCode,
   HttpStatus,
   NotFoundException,
-  Param, ParseUUIDPipe,
+  Param,
+  ParseUUIDPipe,
   Post,
-  Put
-} from "@nestjs/common";
+  Put,
+} from '@nestjs/common';
 import { ArtistService } from './artist.service';
 import { validationID } from '../../utils/utils';
 import { CreateArtistDto, UpdateArtistDto } from './dto/artist.dto';
