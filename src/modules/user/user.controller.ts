@@ -27,16 +27,16 @@ export class UserController {
   @Get()
   @UseInterceptors(ClassSerializerInterceptor)
   @HttpCode(HttpStatus.OK)
-  getAllUsers(): UserEntity[] {
+  getAllUsers() {
     return this.userService.getAllUsers();
   }
 
   @Get(':id')
   @UseInterceptors(ClassSerializerInterceptor)
   @HttpCode(HttpStatus.OK)
-  getUserById(@Param('id') id: string): UserEntity {
+  async getUserById(@Param('id') id: string) {
     validationID(id);
-    const user = this.userService.getUserById(id);
+    const user = await this.userService.getUserById(id);
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -58,10 +58,10 @@ export class UserController {
   @Put(':id')
   @UseInterceptors(ClassSerializerInterceptor)
   @HttpCode(HttpStatus.OK)
-  updateUserPassword(
+  async updateUserPassword(
     @Body() updatePasswordDto: UpdatePasswordDto,
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
-  ): UserEntity {
+  ) {
     validationID(id);
     if (
       !updatePasswordDto ||
@@ -70,7 +70,7 @@ export class UserController {
     ) {
       throw new BadRequestException('Password and old password are required');
     }
-    const user = this.userService.getUserById(id);
+    const user = await this.userService.getUserById(id);
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -79,12 +79,13 @@ export class UserController {
     if (user.password !== updatePasswordDto.oldPassword) {
       throw new ForbiddenException('Invalid old password');
     }
+    this.userService.updatePassword(id, updatePasswordDto);
 
-    user.password = updatePasswordDto.newPassword;
-    user.version += 1;
-    user.updatedAt = Date.now();
+    // user.password = updatePasswordDto.newPassword;
+    // user.version += 1;
+    // user.updatedAt = Date.now();
 
-    return user;
+    // return user;
   }
 
   @Delete(':id')

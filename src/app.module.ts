@@ -13,6 +13,7 @@ import { AlbumEntity } from "./modules/album/entities/album.entity";
 import { TrackEntity } from "./modules/track/entities/track.entity";
 import { ArtistEntity } from "./modules/artist/entities/artist.entity";
 import { UserEntity } from "./modules/user/entities/user.entity";
+import { FavouritesEntity } from "./modules/favorite/entity/favorite.entity";
 
 dotenv.config();
 
@@ -31,7 +32,13 @@ dotenv.config();
       username: process.env.POSTGRES_USER,
       password: String(process.env.POSTGRES_PASSWORD),
       database: process.env.POSTGRES_DB,
-      entities: [AlbumEntity, TrackEntity, ArtistEntity, UserEntity],
+      entities: [
+        AlbumEntity,
+        TrackEntity,
+        ArtistEntity,
+        UserEntity,
+        FavouritesEntity,
+      ],
       synchronize: true,
     }),
   ],

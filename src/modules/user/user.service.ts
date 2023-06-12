@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { DbService } from '../../db/db.service';
 import { CreateUserDto } from './dto/user.dto';
 import { User } from './models/user.interface';
@@ -15,12 +15,13 @@ export class UserService {
     private userRepository: Repository<UserEntity>,
   ) {}
 
-  getAllUsers(): UserEntity[] {
-    return this.db.users;
+  async getAllUsers() {
+    return this.userRepository.find();
   }
 
-  getUserById(id: string): UserEntity | undefined {
-    return this.db.users.find((user: User) => user.id === id);
+  async getUserById(id: string) {
+    const user = await this.userRepository.findOne({ where: { id } });
+    return user ?? null;
   }
 
   createUser(createUserDto: CreateUserDto): UserEntity {
@@ -32,12 +33,25 @@ export class UserService {
       createdAt: Date.now(),
       updatedAt: Date.now(),
     });
-    this.db.users.push(newUser);
+    this.userRepository.create(newUser);
     return newUser;
   }
 
-  deleteUser(id: string): void {
-    const index = this.db.users.findIndex((user: User) => user.id === id);
-    this.db.users.splice(index, 1);
+  async updatePassword(id, data) {
+    const user = await this.getUserById(id);
+    if (!user) {
+      throw new NotFoundException('Track not found');
+    }
+    await this.userRepository.update(id, data);
+    const updatedTrack = await this.getUserById(id);
+    return updatedTrack;
+  }
+
+  async deleteUser(id: string) {
+    // const user = await this.getUserById(id);
+    // if (!user) {
+    //   throw new NotFoundException('User not found');
+    // }
+    return this.userRepository.delete(id)
   }
 }

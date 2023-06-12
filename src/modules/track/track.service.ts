@@ -48,12 +48,12 @@ export class TrackService {
     return await this.trackRepository.delete(id);
   }
 
-  removeArtistId(id: string) {
-    this.db.tracks.forEach((track) => {
-      if (track.artistId === id) {
-        track.artistId = null;
-      }
-    });
+  async removeArtistId(id) {
+    const tracks = await this.trackRepository.find({ where: { artistId: id } });
+    for (const track of tracks) {
+      track.artistId = null;
+      await this.trackRepository.save(track);
+    }
   }
 
   async updateTrack(id, data) {
