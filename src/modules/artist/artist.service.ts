@@ -7,6 +7,9 @@ import { AlbumService } from '../album/album.service';
 import { TrackService } from '../track/track.service';
 import { FavoriteService } from '../favorite/favorite.service';
 import { ArtistEntity } from './entities/artist.entity';
+import { InjectRepository } from "@nestjs/typeorm";
+import { AlbumEntity } from "../album/entities/album.entity";
+import { Repository } from "typeorm";
 
 @Injectable()
 export class ArtistService {
@@ -18,35 +21,33 @@ export class ArtistService {
     private trackService: TrackService,
     @Inject(forwardRef(() => FavoriteService))
     private favouritesService: FavoriteService,
+    @InjectRepository(ArtistEntity)
+    private artistRepository: Repository<ArtistEntity>,
   ) {}
 
-  getAllArtists(): Artist[] {
-    return this.db.artists;
+  getAllArtists() {
+    return this.artistRepository.find();
   }
 
-  getArtistById(id: string): ArtistEntity {
-    const artist = this.db.artists.find((artist) => artist.id === id);
+  async getArtistById(id: string) {
+    const artist = await this.artistRepository.findOne({ where: { id } });
     return artist ?? null;
   }
 
   createArtist(createArtistDto: CreateArtistDto): Artist {
-    const newArtist: Artist = {
-      id: uuidv4(),
-      name: createArtistDto.name,
-      grammy: createArtistDto.grammy,
-    };
-    this.db.artists.push(newArtist);
-    return newArtist;
+    const artist = new ArtistEntity();
+    artist.id = uuidv4();
+    artist.grammy = createArtistDto.grammy;
+    artist.name = createArtistDto.name;
+    this.artistRepository.save(artist);
+    return artist;
   }
 
-  deleteArtist(id: string): ArtistEntity {
-    const index = this.db.artists.findIndex(
-      (artist: Artist) => artist.id === id,
-    );
+  async deleteArtist(id: string): Promise<ArtistEntity> {
+    const artist = await this.getArtistById(id);
     this.albumService.removeArtistId(id);
     this.trackService.removeArtistId(id);
     this.favouritesService.removeArtist(id, true);
-    const [deletedArtist] = this.db.artists.splice(index, 1);
-    return deletedArtist;
+    return artist;
   }
 }

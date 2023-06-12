@@ -60,8 +60,8 @@ export class ArtistController {
       throw new NotFoundException('Artist not found');
     }
 
-    artist.name = updateArtistDto.name;
-    artist.grammy = updateArtistDto.grammy;
+    // artist.name = updateArtistDto.name;
+    // artist.grammy = updateArtistDto.grammy;
 
     return artist;
   }

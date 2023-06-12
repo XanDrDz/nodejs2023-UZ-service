@@ -26,13 +26,13 @@ export class AlbumController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  getAllAlbums(): AlbumEntity[] {
+  getAllAlbums() {
     return this.albumService.getAllAlbums();
   }
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  getAlbumById(
+  async getAlbumById(
     @Param(
       'id',
       new ParseUUIDPipe({
@@ -41,8 +41,8 @@ export class AlbumController {
       }),
     )
     id: string,
-  ): AlbumEntity {
-    const album = this.albumService.getAlbumById(id);
+  ) {
+    const album = await this.albumService.getAlbumById(id);
     if (!album) {
       throw new NotFoundException('Album not found');
     }
@@ -52,7 +52,7 @@ export class AlbumController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  createAlbum(@Body() createAlbumDto: CreateAlbumDto): AlbumEntity {
+  createAlbum(@Body() createAlbumDto: CreateAlbumDto) {
     return this.albumService.createAlbum(createAlbumDto);
   }
 
@@ -68,9 +68,7 @@ export class AlbumController {
       throw new NotFoundException('Album not found');
     }
 
-    album.name = updateAlbumDto.name;
-    album.year = updateAlbumDto.year;
-    album.artistId = updateAlbumDto.artistId;
+    this.albumService.updateAlbum(id, updateAlbumDto);
 
     return album;
   }

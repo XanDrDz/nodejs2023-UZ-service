@@ -4,10 +4,16 @@ import { CreateUserDto } from './dto/user.dto';
 import { User } from './models/user.interface';
 import { v4 as uuidv4 } from 'uuid';
 import { UserEntity } from './entities/user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UserService {
-  constructor(private db: DbService) {}
+  constructor(
+    private db: DbService,
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>,
+  ) {}
 
   getAllUsers(): UserEntity[] {
     return this.db.users;

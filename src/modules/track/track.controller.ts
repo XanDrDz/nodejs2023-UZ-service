@@ -15,7 +15,6 @@ import {
 import { TrackService } from './track.service';
 import { validationID } from '../../utils/utils';
 import { CreateTrackDto, UpdateTrackDto } from './dto/track.dto';
-import { isRequestInvalid } from './helpers/track-body-checker';
 import { TrackEntity } from './entities/track.entity';
 
 @Controller('track')
@@ -30,11 +29,11 @@ export class TrackController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  getTrackById(
+  async getTrackById(
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
-  ): TrackEntity {
+  ) {
     validationID(id);
-    const track = this.trackService.getTrackById(id);
+    const track = await this.trackService.getTrackById(id);
     if (!track) {
       throw new NotFoundException('Track not found');
     }
@@ -55,26 +54,12 @@ export class TrackController {
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
   ) {
     validationID(id);
-    const track = this.trackService.getTrackById(id);
-    if (!track) {
-      throw new NotFoundException('Track not found');
-    }
-
-    track.name = updateTrackDto.name;
-    track.albumId = updateTrackDto.albumId;
-    track.artistId = updateTrackDto.artistId;
-    track.duration = updateTrackDto.duration;
-
-    return track;
+    return this.trackService.updateTrack(id, updateTrackDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   deleteTrack(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
-    const track = this.trackService.getTrackById(id);
-    if (!track) {
-      throw new NotFoundException('Track not found');
-    }
-    this.trackService.deleteTrack(id);
+    return this.trackService.deleteTrack(id);
   }
 }

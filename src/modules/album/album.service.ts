@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { DbService } from '../../db/db.service';
 import { v4 as uuidv4 } from 'uuid';
 import { Album } from './models/album.interface';
@@ -6,6 +6,8 @@ import { CreateAlbumDto } from './dto/album.dto';
 import { TrackService } from '../track/track.service';
 import { FavoriteService } from '../favorite/favorite.service';
 import { AlbumEntity } from './entities/album.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { FindOneOptions, Repository } from "typeorm";
 
 @Injectable()
 export class AlbumService {
@@ -13,33 +15,43 @@ export class AlbumService {
     private db: DbService,
     private trackService: TrackService,
     private favoriteService: FavoriteService,
+    @InjectRepository(AlbumEntity)
+    private albumRepository: Repository<AlbumEntity>,
   ) {}
 
-  getAllAlbums(): Album[] {
-    return this.db.albums;
+  getAllAlbums() {
+    return this.albumRepository.find();
   }
 
-  getAlbumById(id: string): AlbumEntity {
-    return this.db.albums.find(({ id: albumId }) => albumId === id) ?? null;
+  async getAlbumById(id) {
+    const options: FindOneOptions<AlbumEntity> = {
+      where: { id },
+    };
+    return await this.albumRepository.findOne(options);
+  }
+
+  async updateAlbum(id, data) {
+    return this.albumRepository.update(id, data);
   }
 
   createAlbum(createAlbumDto: CreateAlbumDto): AlbumEntity {
-    const newAlbum: Album = {
-      id: uuidv4(),
-      ...createAlbumDto,
-    };
-    this.db.albums.push(newAlbum);
-    return newAlbum;
+    const album = new AlbumEntity();
+    album.name = createAlbumDto.name;
+    album.year = createAlbumDto.year;
+    album.artistId = createAlbumDto.artistId;
+    album.id = uuidv4();
+
+    this.albumRepository.save(album);
+    return album;
   }
 
-  deleteAlbum(id: string): AlbumEntity {
-    const index = this.db.albums.findIndex((album: Album) => album.id === id);
+  async deleteAlbum(id) {
+    const album = await this.getAlbumById(id);
+    if (!album) {
+      throw new NotFoundException('Album not found');
+    }
 
-    const [deletedAlbum] = this.db.albums.splice(index, 1);
-    this.trackService.removeAlbumId(id);
-    this.favoriteService.removeAlbum(id, true);
-
-    return deletedAlbum;
+    return await this.albumRepository.delete(id);
   }
 
   removeArtistId(id: string) {

@@ -5,6 +5,8 @@ import { DbModule } from '../../db/db.module';
 import { AlbumModule } from '../album/album.module';
 import { TrackModule } from '../track/track.module';
 import { FavoriteModule } from '../favorite/favorite.module';
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { ArtistEntity } from "./entities/artist.entity";
 
 @Module({
   imports: [
@@ -12,6 +14,7 @@ import { FavoriteModule } from '../favorite/favorite.module';
     forwardRef(() => AlbumModule),
     forwardRef(() => TrackModule),
     forwardRef(() => FavoriteModule),
+    TypeOrmModule.forFeature([ArtistEntity]),
   ],
   controllers: [ArtistController],
   providers: [ArtistService],
