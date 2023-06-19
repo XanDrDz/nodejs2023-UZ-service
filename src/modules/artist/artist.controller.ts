@@ -28,9 +28,9 @@ export class ArtistController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  getArtistById(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+  async getArtistById(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     validationID(id);
-    const artist = this.artistService.getArtistById(id);
+    const artist = await this.artistService.getArtistById(id);
     if (!artist) {
       throw new NotFoundException('Artist not found');
     }
@@ -50,20 +50,17 @@ export class ArtistController {
 
   @Put(':id')
   @HttpCode(HttpStatus.OK)
-  updateArtistInfo(
+  async updateArtistInfo(
     @Body() updateArtistDto: UpdateArtistDto,
     @Param('id') id: string,
   ) {
     validationID(id);
-    const artist = this.artistService.getArtistById(id);
+    const artist = await this.artistService.getArtistById(id);
     if (!artist) {
       throw new NotFoundException('Artist not found');
     }
 
-    // artist.name = updateArtistDto.name;
-    // artist.grammy = updateArtistDto.grammy;
-
-    return artist;
+    return this.artistService.updateArtist(id, updateArtistDto);
   }
 
   @Delete(':id')

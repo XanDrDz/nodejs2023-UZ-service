@@ -25,9 +25,9 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @Get()
-  @UseInterceptors(ClassSerializerInterceptor)
+
   @HttpCode(HttpStatus.OK)
-  getAllUsers() {
+  async getAllUsers() {
     return this.userService.getAllUsers();
   }
 
@@ -47,7 +47,7 @@ export class UserController {
   @Post()
   @UseInterceptors(ClassSerializerInterceptor)
   @HttpCode(HttpStatus.CREATED)
-  createUser(@Body() createUserDto: CreateUserDto): UserEntity {
+  async createUser(@Body() createUserDto: CreateUserDto): Promise<UserEntity> {
     if (!createUserDto || !createUserDto.login || !createUserDto.password) {
       throw new BadRequestException('Login and password are required');
     }
@@ -79,24 +79,19 @@ export class UserController {
     if (user.password !== updatePasswordDto.oldPassword) {
       throw new ForbiddenException('Invalid old password');
     }
-    this.userService.updatePassword(id, updatePasswordDto);
 
-    // user.password = updatePasswordDto.newPassword;
-    // user.version += 1;
-    // user.updatedAt = Date.now();
-
-    // return user;
+    return this.userService.updatePassword(id, updatePasswordDto);
   }
 
   @Delete(':id')
   @UseInterceptors(ClassSerializerInterceptor)
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteUser(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+  async deleteUser(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     validationID(id);
-    const user = this.userService.getUserById(id);
+    const user = await this.userService.getUserById(id);
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    this.userService.deleteUser(id);
+    return this.userService.deleteUser(id);
   }
 }

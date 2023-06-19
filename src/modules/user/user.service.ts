@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
 import { DbService } from '../../db/db.service';
 import { CreateUserDto } from './dto/user.dto';
 import { User } from './models/user.interface';
@@ -16,15 +16,15 @@ export class UserService {
   ) {}
 
   async getAllUsers() {
-    return this.userRepository.find();
+    return await this.userRepository.find();
   }
 
   async getUserById(id: string) {
     const user = await this.userRepository.findOne({ where: { id } });
-    return user ?? null;
+    return user;
   }
 
-  createUser(createUserDto: CreateUserDto): UserEntity {
+  async createUser(createUserDto: CreateUserDto) {
     const newUser = new UserEntity({
       id: uuidv4(),
       login: createUserDto.login,
@@ -33,25 +33,28 @@ export class UserService {
       createdAt: Date.now(),
       updatedAt: Date.now(),
     });
-    this.userRepository.create(newUser);
-    return newUser;
+    return await this.userRepository.save(newUser);
   }
 
   async updatePassword(id, data) {
     const user = await this.getUserById(id);
-    if (!user) {
-      throw new NotFoundException('Track not found');
+    user.password = data.newPassword;
+    user.updatedAt = Number(Date.now());
+    user.createdAt = Number(user.createdAt);
+    user.version += 1;
+
+    const updatedUser = await this.userRepository.save(user);
+    if (!updatedUser) {
+      throw new HttpException(
+        'Failed to update user',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
-    await this.userRepository.update(id, data);
-    const updatedTrack = await this.getUserById(id);
-    return updatedTrack;
+
+    return updatedUser;
   }
 
   async deleteUser(id: string) {
-    // const user = await this.getUserById(id);
-    // if (!user) {
-    //   throw new NotFoundException('User not found');
-    // }
-    return this.userRepository.delete(id)
+    return await this.userRepository.delete(id);
   }
 }

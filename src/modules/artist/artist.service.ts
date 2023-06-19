@@ -43,6 +43,14 @@ export class ArtistService {
     return artist;
   }
 
+  async updateArtist(id, updateArtistDto) {
+    const artist = await this.getArtistById(id);
+    artist.name = updateArtistDto.name;
+    artist.grammy = updateArtistDto.grammy;
+
+    return this.artistRepository.save(artist);
+  }
+
   async deleteArtist(id: string): Promise<ArtistEntity> {
     const artist = await this.getArtistById(id);
     this.albumService.removeArtistId(id);

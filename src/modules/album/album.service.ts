@@ -31,7 +31,11 @@ export class AlbumService {
   }
 
   async updateAlbum(id, data) {
-    return this.albumRepository.update(id, data);
+    const album = await this.getAlbumById(id);
+    album.artistId = data.artistId;
+    album.name = data.name;
+    album.year = data.year;
+    return this.albumRepository.save(album);
   }
 
   createAlbum(createAlbumDto: CreateAlbumDto): AlbumEntity {

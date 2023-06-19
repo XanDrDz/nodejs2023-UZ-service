@@ -16,10 +16,10 @@ export class UserEntity {
   @Column()
   version: number;
 
-  @Column()
+  @Column({ type: 'bigint' })
   createdAt: number;
 
-  @Column()
+  @Column({ type: 'bigint' })
   updatedAt: number;
 
   constructor(partial: Partial<UserEntity>) {
