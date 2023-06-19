@@ -65,12 +65,12 @@ export class ArtistController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteArtist(@Param('id') id: string) {
+  async deleteArtist(@Param('id') id: string) {
     validationID(id);
-    const artist = this.artistService.getArtistById(id);
+    const artist = await this.artistService.getArtistById(id);
     if (!artist) {
       throw new NotFoundException('Artist not found');
     }
-    this.artistService.deleteArtist(id);
+    return this.artistService.deleteArtist(id);
   }
 }

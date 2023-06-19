@@ -38,15 +38,15 @@ export class AlbumService {
     return this.albumRepository.save(album);
   }
 
-  createAlbum(createAlbumDto: CreateAlbumDto): AlbumEntity {
+  async createAlbum(createAlbumDto: CreateAlbumDto) {
     const album = new AlbumEntity();
     album.name = createAlbumDto.name;
     album.year = createAlbumDto.year;
     album.artistId = createAlbumDto.artistId;
     album.id = uuidv4();
 
-    this.albumRepository.save(album);
-    return album;
+
+    return await this.albumRepository.save(album);
   }
 
   async deleteAlbum(id) {
@@ -54,15 +54,16 @@ export class AlbumService {
     if (!album) {
       throw new NotFoundException('Album not found');
     }
+    await this.trackService.removeAlbumId(id);
 
     return await this.albumRepository.delete(id);
   }
 
-  removeArtistId(id: string) {
-    this.db.albums.forEach((album: Album) => {
-      if (album.artistId === id) {
-        album.artistId = null;
-      }
-    });
+  async removeArtistId(id: string) {
+    const albums = await this.albumRepository.find({ where: { artistId: id } });
+    for (const album of albums) {
+      album.artistId = null;
+      await this.albumRepository.save(album);
+    }
   }
 }

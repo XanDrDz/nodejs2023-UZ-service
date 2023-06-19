@@ -43,7 +43,7 @@ export class TrackController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  createTrack(@Body() createTrackDto: CreateTrackDto): TrackEntity {
+  createTrack(@Body() createTrackDto: CreateTrackDto) {
     return this.trackService.createTrack(createTrackDto);
   }
 

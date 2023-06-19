@@ -9,7 +9,7 @@ import { FavoriteService } from '../favorite/favorite.service';
 import { ArtistEntity } from './entities/artist.entity';
 import { InjectRepository } from "@nestjs/typeorm";
 import { AlbumEntity } from "../album/entities/album.entity";
-import { Repository } from "typeorm";
+import { DeleteResult, Repository } from "typeorm";
 
 @Injectable()
 export class ArtistService {
@@ -31,16 +31,15 @@ export class ArtistService {
 
   async getArtistById(id: string) {
     const artist = await this.artistRepository.findOne({ where: { id } });
-    return artist ?? null;
+    return artist;
   }
 
-  createArtist(createArtistDto: CreateArtistDto): Artist {
+  async createArtist(createArtistDto: CreateArtistDto) {
     const artist = new ArtistEntity();
     artist.id = uuidv4();
     artist.grammy = createArtistDto.grammy;
     artist.name = createArtistDto.name;
-    this.artistRepository.save(artist);
-    return artist;
+    return await this.artistRepository.save(artist);
   }
 
   async updateArtist(id, updateArtistDto) {
@@ -48,14 +47,14 @@ export class ArtistService {
     artist.name = updateArtistDto.name;
     artist.grammy = updateArtistDto.grammy;
 
-    return this.artistRepository.save(artist);
+    return await this.artistRepository.save(artist);
   }
 
-  async deleteArtist(id: string): Promise<ArtistEntity> {
-    const artist = await this.getArtistById(id);
-    this.albumService.removeArtistId(id);
-    this.trackService.removeArtistId(id);
-    this.favouritesService.removeArtist(id, true);
-    return artist;
+  async deleteArtist(id: string) {
+    // const artist = await this.getArtistById(id);
+    await this.albumService.removeArtistId(id);
+    await this.trackService.removeArtistId(id);
+    await this.favouritesService.removeArtist(id, true);
+    return await this.artistRepository.delete(id);
   }
 }

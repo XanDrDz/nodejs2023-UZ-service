@@ -27,15 +27,14 @@ export class TrackService {
     return track ?? null;
   }
 
-  createTrack(createTrackDto: CreateTrackDto) {
+  async createTrack(createTrackDto: CreateTrackDto) {
     const track = new TrackEntity();
     track.id = uuidv4();
     track.albumId = createTrackDto.albumId;
     track.duration = createTrackDto.duration;
     track.name = createTrackDto.name;
     track.artistId = createTrackDto.artistId;
-    this.trackRepository.save(track);
-    return track;
+    return await this.trackRepository.save(track);
   }
 
   async deleteTrack(id: string) {
