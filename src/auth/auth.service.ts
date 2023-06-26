@@ -1,10 +1,9 @@
 import {
   BadRequestException,
-  ForbiddenException,
-  Injectable,
-} from '@nestjs/common';
+  ForbiddenException, forwardRef, Inject,
+  Injectable
+} from "@nestjs/common";
 import { JwtService } from '@nestjs/jwt';
-import * as process from 'process';
 import { UserService } from '../modules/user/user.service';
 import { UserEntity } from '../modules/user/entities/user.entity';
 import { CreateUserDto } from '../modules/user/dto/user.dto';
@@ -12,6 +11,7 @@ import { CreateUserDto } from '../modules/user/dto/user.dto';
 @Injectable()
 export class AuthService {
   constructor(
+    @Inject(forwardRef(() => UserService))
     private userService: UserService,
     private jwtService: JwtService,
   ) {}

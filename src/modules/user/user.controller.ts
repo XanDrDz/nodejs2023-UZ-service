@@ -47,7 +47,7 @@ export class UserController {
   @Post()
   @UseInterceptors(ClassSerializerInterceptor)
   @HttpCode(HttpStatus.CREATED)
-  createUser(@Body() createUserDto: CreateUserDto): UserEntity {
+  createUser(@Body() createUserDto: CreateUserDto) {
     if (!createUserDto || !createUserDto.login || !createUserDto.password) {
       throw new BadRequestException('Login and password are required');
     }
@@ -61,7 +61,7 @@ export class UserController {
   updateUserPassword(
     @Body() updatePasswordDto: UpdatePasswordDto,
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
-  ): UserEntity {
+  ) {
     validationID(id);
     if (
       !updatePasswordDto ||
@@ -70,21 +70,8 @@ export class UserController {
     ) {
       throw new BadRequestException('Password and old password are required');
     }
-    const user = this.userService.getUserById(id);
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-    if (updatePasswordDto.newPassword === updatePasswordDto.oldPassword)
-      throw new ForbiddenException('You can not write the same password');
-    if (user.password !== updatePasswordDto.oldPassword) {
-      throw new ForbiddenException('Invalid old password');
-    }
 
-    user.password = updatePasswordDto.newPassword;
-    user.version += 1;
-    user.updatedAt = Date.now();
-
-    return user;
+    return this.userService.update(id, updatePasswordDto);
   }
 
   @Delete(':id')

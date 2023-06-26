@@ -8,13 +8,13 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { CreateUserDto } from '../user/dto/createUser.dto';
 import { AuthService } from './auth.service';
 import { Public } from './decorators/decorator.public';
 import { ValidationRefreshPipe } from './pipes/validationRefresh.pipe';
 import { JwtRefreshAuthGuard } from './guards/refresh-auth.guard';
 import { Token } from './types/token.type';
-import { UserEntity } from '../user/entities/user.entity';
+import { CreateUserDto } from '../modules/user/dto/user.dto';
+import { UserEntity } from '../modules/user/entities/user.entity';
 
 @Public()
 @UseInterceptors(ClassSerializerInterceptor)

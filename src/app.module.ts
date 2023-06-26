@@ -7,6 +7,7 @@ import { FavoriteModule } from './modules/favorite/favorite.module';
 import { TrackModule } from './modules/track/track.module';
 import { UserModule } from './modules/user/user.module';
 import { DbModule } from './db/db.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { DbModule } from './db/db.module';
     TrackModule,
     UserModule,
     DbModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
